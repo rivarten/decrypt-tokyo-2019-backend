@@ -57,23 +57,41 @@ export async function uploadArticle(req: any, res: any): Promise<any> {
     const timestamp = req.header('uniqys-timestamp');
     const blockhash = req.header('uniqys-blockhash');
 
-    let { article } = req.body;
+    res.send({
+        success: true,
+        data: null,
+        error: null,
+    });
+
+    //let article: ArticleContent = req.body;
+    //const { article } = req.body;
+    //if (typeof article.creator_name !== 'string' ||
+    //    typeof article.price !== 'number' ||
+    //    typeof article.path !== 'string) {
+    //    res.send({
+    //        success: false,
+    //        data: null,
+    //        error: 'パラメータ異常',
+    //    });
+    //    return;
+    //}
 
     //
-    //ファイル受信
-    //
-    const file = await uploadArticleFile(req, res);
-    article.path = file.path;
+    ////
+    ////ファイル受信
+    ////
+    //const file = await uploadArticleFile(req, res);
+    //article.path = file.path;
 
     //
     //ブロックチェーンに書き込み
     //
-    article.put({
-        sender,
-        timestamp,
-        blockhash,
-        article
-    });
+    //article.put({
+    //    sender,
+    //    timestamp,
+    //    blockhash,
+    //    article
+    //});
 }
 export async function purchaseArticle(req: any, res: any): Promise<any> {
 }
