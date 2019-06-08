@@ -1,12 +1,31 @@
 import * as Article from '../models/Article';
 import { AppConfig } from '../config/App';
-import * as moment from 'moment';
 import * as fs from 'fs';
 
+import * as moment from 'moment';
+import * as Common from './Common';
+import { EasyClientForServer } from '@uniqys/easy-client';
+import * as crypto from 'crypto';
+let sha256;
+
+const localstorage = require("localstorage-ponyfill");
+const localStorage = localstorage.createLocalStorage({mode: "node"});
+
 export async function getListArticle(req: any, res: any): Promise<any> {
-    //const count: number = await Article.getCount();
-    //const articles = await article.getList(count);
-    //res.send({ articles });
+    const count: number = await Article.getArticleCount();
+    let articles = await Article.getArticleList(count);
+    for (let i=0; i < articles.length; i++) {
+        delete articles[i].path;
+    }
+    //FIXME:
+    //      add response
+    //          purchase_total_count:
+    //          value:
+    //res.send({
+    //    success: true,
+    //    data: articles,
+    //    error: null,
+    //});
 
     res.send({
         success: true,
@@ -58,10 +77,28 @@ async function uploadArticleFile(req: any, res: any): Promise<any> {
 }
 export async function uploadArticle(req: any, res: any): Promise<any> {
 
-    const sender = req.header('uniqys-sender');
-    const timestamp = req.header('uniqys-timestamp');
-    const blockhash = req.header('uniqys-blockhash');
-
+    let sender = '';
+    let timestamp = 0;
+    let blockhash = '';
+    const user_type = await Common.getUserType(req, res);
+    switch (user_type) {
+        case Common.UT_BROWSER:
+            sender = req.header('uniqys-sender');
+            timestamp = req.header('uniqys-timestamp');
+            blockhash = req.header('uniqys-blockhash');
+            break;
+        case Common.UT_APP:
+            const seed = localStorage.getItem(req.body.address);
+            console.log(`seed: ${seed}`);
+            sha256 = crypto.createHash('sha256');
+            sha256.setEncoding('hex');
+            sha256.write(`${seed}`);
+            sha256.end();
+            const hash = sha256.read();
+            const client = new EasyClientForServer(`http://${AppConfig.CLIENT_CONNECT_HOST}:8080`, hash);
+            await client.post('/api/upload', {}, {sign: true});
+            break;
+    }
 
 
     //FIXME: this is for hackathon temp implement
@@ -108,6 +145,27 @@ export async function uploadArticle(req: any, res: any): Promise<any> {
     });
 }
 export async function purchaseArticle(req: any, res: any): Promise<any> {
+    const sender = req.header('uniqys-sender');
+    const timestamp = req.header('uniqys-timestamp');
+    const blockhash = req.header('uniqys-blockhash');
+    const { id } = req.params;
+    const article: any = await Article.buy({
+        sender,
+        timestamp,
+        blockhash,
+        id
+    }).catch((err) => {
+        return res.send({
+            success: false,
+            data: article,
+            error: `何かエラー: ${JSON.stringify(err)}`,
+        });
+    });
+    res.send({
+        success: true,
+        data: article,
+        error: null,
+    });
 }
 export async function viewArticle(req: any, res: any): Promise<any> {
     res.send(fs.readFileSync(`./backend/dist/assets/${req.params.file_name}`));

@@ -1,8 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const APP_HOST = '0.0.0.0';
-const APP_PORT = 5650;
+import { AppConfig } from './config/App';
 
 const app = express();
 
@@ -15,19 +14,35 @@ import {
 
 import {
     getUserInfo,
-} from './controllers/UserInfo';
+    beOilKing,
+    signUp,
+    logIn,
+} from './controllers/User';
 
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.get('/hello', async (_: any, res: any) => {
       res.send('hello');
 });
 
-app.listen(APP_PORT, APP_HOST);
+app.listen(AppConfig.APP_PORT, AppConfig.APP_HOST);
 
 app.get('/api/userinfo', getUserInfo);
-app.post('/api/article/purchase', purchaseArticle);
+app.post('/api/article/purchase/:id', purchaseArticle);
 app.get('/assets/article/:file_name', viewArticle);
 app.get('/api/article/list', getListArticle);
 app.post('/api/upload', uploadArticle);
+app.post('/api/be-oil-king/:want_balance', beOilKing);
 
+
+//
+//for NativeApp
+//
+
+//signup
+//
+//  response
+//      address
+app.get('/api/signup', signUp);
+app.post('/api/login', logIn);

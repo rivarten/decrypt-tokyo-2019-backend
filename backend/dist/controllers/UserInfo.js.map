@@ -1,1 +1,0 @@
-{"version":3,"file":"UserInfo.js","sourceRoot":"","sources":["../../src/controllers/UserInfo.ts"],"names":[],"mappings":";;AAAA,+CAA+C;AAExC,KAAK,UAAU,WAAW,CAAC,GAAQ,EAAE,GAAQ;IAChD,GAAG,CAAC,IAAI,CAAC;QACL,OAAO,EAAE,IAAI;QACb,IAAI,EAAE;YACF,OAAO,EAAE,QAAQ,CAAC,UAAU,EAAE;SACjC;QACD,KAAK,EAAE,IAAI;KACd,CAAC,CAAC;AACP,CAAC;AARD,kCAQC"}
