@@ -1,0 +1,12 @@
+{
+  "unique": "79df1075dfd0e5e8fd5adcaa1639d3d1d5492e2d175d3259e1bc7cc56cf556a6c71d6a491ee6cf2e",
+  "timestamp": 1559971321,
+  "validatorSet": [
+    {
+      "address": "fced3b2b6dc6955748247830ab80ddae937436df",
+      "power": 1
+    }
+  ],
+  "initApp": "",
+  "startApp": "node backend/dist/server.js"
+}

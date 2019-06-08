@@ -1,0 +1,80 @@
+{
+  "name": "backend_node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "build": "npm run clean && tsc && npm run copy-static-files",
+    "copy-static-files": "ts-node scripts/copyStaticFiles.ts",
+    "clean": "rimraf dist/*",
+    "prettier": "prettier --write '*.js' 'src/**/*.js'",
+    "lint": "eslint *.js",
+    "lint:ts": "tslint --project tsconfig.json --config tslint.json",
+    "test": "jest"
+  },
+  "jest": {
+    "verbose": true,
+    "setupFiles": [
+      "<rootDir>/test/jestSetup.js"
+    ],
+    "testURL": "http://localhost:8080/",
+    "coverageDirectory": "./coverage",
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/jestSetup.js"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.json"
+      }
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testMatch": [
+      "**/test/**/*.spec.(ts|js)"
+    ],
+    "testPathIgnorePatterns": [
+      "/test/__orig__/.*"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testEnvironment": "node"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/memcached": "^2.2.6",
+    "@types/node": "^12.0.7",
+    "express": "^4.17.1",
+    "memcached": "^2.2.2",
+    "moment": "^2.24.0",
+    "typescript": "^3.2.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/shelljs": "^0.8.1",
+    "jest": "^24.0.0",
+    "prettier": "^1.16.1",
+    "rimraf": "^2.6.3",
+    "shelljs": "^0.8.3",
+    "sinon": "^7.2.3",
+    "swagger-node": "^0.8.1",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.2.0",
+    "tsc": "^1.20150623.0",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-no-circular-imports": "^0.6.1",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-sonarts": "^1.9.0"
+  }
+}
