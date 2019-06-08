@@ -14,7 +14,7 @@ app.get('/hello', async (_, res) => {
 app.listen(APP_PORT, APP_HOST);
 app.get('/api/userinfo', UserInfo_1.getUserInfo);
 app.post('/api/article/purchase', Article_1.purchaseArticle);
-app.get('/api/article/view', Article_1.viewArticle);
+app.get('/assets/article/:file_name', Article_1.viewArticle);
 app.get('/api/article/list', Article_1.getListArticle);
 app.post('/api/upload', Article_1.uploadArticle);
 //# sourceMappingURL=server.js.map

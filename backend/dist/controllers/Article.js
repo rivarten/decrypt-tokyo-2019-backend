@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const Article = require("../models/Article");
+const App_1 = require("../config/App");
 const moment = require("moment");
+const fs = require("fs");
 async function getListArticle(req, res) {
     res.send({
         success: true,
@@ -44,22 +47,34 @@ async function getListArticle(req, res) {
 }
 exports.getListArticle = getListArticle;
 async function uploadArticleFile(req, res) {
+    const files = fs.readdirSync('./backend/dist/assets/');
+    const selected_file_idx = Math.floor(Math.random() * files.length);
     return {
-        path: 'file path',
+        path: `${App_1.AppConfig.ArticleBasePath}${files[selected_file_idx]}`,
     };
 }
 async function uploadArticle(req, res) {
     const sender = req.header('uniqys-sender');
     const timestamp = req.header('uniqys-timestamp');
     const blockhash = req.header('uniqys-blockhash');
-    let { article } = req.body;
+    let article = {
+        creator_name: 'weiwei',
+        price: Math.floor(Math.random() * App_1.AppConfig.MaxPrice),
+        path: '',
+    };
     const file = await uploadArticleFile(req, res);
+    console.log(file);
     article.path = file.path;
-    article.put({
+    Article.put({
         sender,
         timestamp,
         blockhash,
         article
+    });
+    res.send({
+        success: true,
+        data: article,
+        error: null,
     });
 }
 exports.uploadArticle = uploadArticle;
@@ -67,6 +82,7 @@ async function purchaseArticle(req, res) {
 }
 exports.purchaseArticle = purchaseArticle;
 async function viewArticle(req, res) {
+    res.send(fs.readFileSync(`./backend/dist/assets/${req.params.file_name}`));
 }
 exports.viewArticle = viewArticle;
 //# sourceMappingURL=Article.js.map

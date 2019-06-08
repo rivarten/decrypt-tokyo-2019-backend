@@ -1,8 +1,7 @@
+import { AppConfig } from '../config/App';
 import * as Memcached from 'memcached';
 
-const DB_HOST = 'localhost';
-const DB_PORT = 5652;
-const memcached = new Memcached(`${DB_HOST}:${DB_PORT}`);
+const memcached = new Memcached(`${AppConfig.DB_HOST}:${AppConfig.DB_PORT}`);
 
 export async function put(data: any): Promise<any> {
     //
@@ -49,12 +48,12 @@ async function incrementCount(): Promise<any> {
             if (typeof result === 'number') {
                 return resolve(result);
             }
-            memcached.set('count', 1, 0, (err: any) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(1);
-            });
+            //memcached.set('count', 1, 0, (err: any) => {
+            //    if (err) {
+            //        return reject(err);
+            //    }
+            //    resolve(1);
+            //});
         });
     });
 }

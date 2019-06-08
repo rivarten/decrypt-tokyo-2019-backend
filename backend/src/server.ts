@@ -27,7 +27,7 @@ app.listen(APP_PORT, APP_HOST);
 
 app.get('/api/userinfo', getUserInfo);
 app.post('/api/article/purchase', purchaseArticle);
-app.get('/api/article/view', viewArticle);
+app.get('/assets/article/:file_name', viewArticle);
 app.get('/api/article/list', getListArticle);
 app.post('/api/upload', uploadArticle);
 

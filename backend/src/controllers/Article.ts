@@ -1,8 +1,10 @@
-import * as article from '../models/Article';
+import * as Article from '../models/Article';
+import { AppConfig } from '../config/App';
 import * as moment from 'moment';
+import * as fs from 'fs';
 
 export async function getListArticle(req: any, res: any): Promise<any> {
-    //const count: number = await article.getCount();
+    //const count: number = await Article.getCount();
     //const articles = await article.getList(count);
     //res.send({ articles });
 
@@ -47,8 +49,11 @@ export async function getListArticle(req: any, res: any): Promise<any> {
     });
 }
 async function uploadArticleFile(req: any, res: any): Promise<any> {
+    //FIXME: this is for hackathon temp implement
+    const files = fs.readdirSync('./backend/dist/assets/');
+    const selected_file_idx = Math.floor(Math.random() * files.length);
     return {
-        path: 'file path',
+        path: `${AppConfig.ArticleBasePath}${files[selected_file_idx]}`,
     };
 }
 export async function uploadArticle(req: any, res: any): Promise<any> {
@@ -57,17 +62,20 @@ export async function uploadArticle(req: any, res: any): Promise<any> {
     const timestamp = req.header('uniqys-timestamp');
     const blockhash = req.header('uniqys-blockhash');
 
-    res.send({
-        success: true,
-        data: null,
-        error: null,
-    });
 
-    //let article: ArticleContent = req.body;
+
+    //FIXME: this is for hackathon temp implement
     //const { article } = req.body;
+    let article = {
+        creator_name: 'weiwei',
+        price: Math.floor(Math.random() * AppConfig.MaxPrice),
+        path: '',
+    };
+
+    //パラメータチェック
+    //FIXME: this is for hackathon temp implement
     //if (typeof article.creator_name !== 'string' ||
-    //    typeof article.price !== 'number' ||
-    //    typeof article.path !== 'string) {
+    //    typeof article.price !== 'number') {
     //    res.send({
     //        success: false,
     //        data: null,
@@ -76,24 +84,31 @@ export async function uploadArticle(req: any, res: any): Promise<any> {
     //    return;
     //}
 
+    
     //
-    ////
-    ////ファイル受信
-    ////
-    //const file = await uploadArticleFile(req, res);
-    //article.path = file.path;
+    //ファイル受信
+    //
+    const file = await uploadArticleFile(req, res);
+    console.log(file);
+    article.path = file.path;
 
-    //
+    
     //ブロックチェーンに書き込み
-    //
-    //article.put({
-    //    sender,
-    //    timestamp,
-    //    blockhash,
-    //    article
-    //});
+    Article.put({
+        sender,
+        timestamp,
+        blockhash,
+        article
+    });
+
+    res.send({
+        success: true,
+        data: article,
+        error: null,
+    });
 }
 export async function purchaseArticle(req: any, res: any): Promise<any> {
 }
 export async function viewArticle(req: any, res: any): Promise<any> {
+    res.send(fs.readFileSync(`./backend/dist/assets/${req.params.file_name}`));
 }

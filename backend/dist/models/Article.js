@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const App_1 = require("../config/App");
 const Memcached = require("memcached");
-const DB_HOST = 'localhost';
-const DB_PORT = 5652;
-const memcached = new Memcached(`${DB_HOST}:${DB_PORT}`);
+const memcached = new Memcached(`${App_1.AppConfig.DB_HOST}:${App_1.AppConfig.DB_PORT}`);
 async function put(data) {
     const count = await incrementCount();
     return new Promise((resolve, reject) => {
@@ -49,12 +48,6 @@ async function incrementCount() {
             if (typeof result === 'number') {
                 return resolve(result);
             }
-            memcached.set('count', 1, 0, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(1);
-            });
         });
     });
 }
