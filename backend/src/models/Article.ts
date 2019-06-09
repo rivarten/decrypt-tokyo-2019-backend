@@ -81,12 +81,12 @@ async function incrementArticleCount(): Promise<any> {
             if (typeof result === 'number') {
                 return resolve(result);
             }
-            //memcached.set('count', 1, 0, (err: any) => {
-            //    if (err) {
-            //        return reject(err);
-            //    }
-            //    resolve(1);
-            //});
+            memcached.set('article-count', 1, 0, (err: any) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(1);
+            });
         });
     });
 }

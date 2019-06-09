@@ -2,18 +2,20 @@ import * as Article from '../models/Article';
 import { AppConfig } from '../config/App';
 import * as fs from 'fs';
 
-import * as moment from 'moment';
-import * as Common from './Common';
-import { EasyClientForServer } from '@uniqys/easy-client';
-import * as crypto from 'crypto';
-let sha256;
+//import * as moment from 'moment';
+//import * as Common from './Common';
+//import { EasyClientForServer } from '@uniqys/easy-client';
+//import * as crypto from 'crypto';
+//let sha256;
 
-const localstorage = require("localstorage-ponyfill");
-const localStorage = localstorage.createLocalStorage({mode: "node"});
+//const localstorage = require("localstorage-ponyfill");
+//const localStorage = localstorage.createLocalStorage({mode: "node"});
 
 export async function getListArticle(req: any, res: any): Promise<any> {
     const count: number = await Article.getArticleCount();
+    console.log(count);
     let articles = await Article.getArticleList(count);
+    console.log(articles);
     for (let i=0; i < articles.length; i++) {
         delete articles[i].path;
     }
@@ -21,51 +23,51 @@ export async function getListArticle(req: any, res: any): Promise<any> {
     //      add response
     //          purchase_total_count:
     //          value:
-    //res.send({
-    //    success: true,
-    //    data: articles,
-    //    error: null,
-    //});
-
     res.send({
         success: true,
-        data: [
-            {
-                id: 1,
-                sender: 'sender address',
-                timestamp: moment().valueOf()/1000,
-                blockhash: 'block hash',
-                creator_name: 'creator name',
-                price: 300,
-                purchase_count: 100,
-                value: 5.0,
-                path: 'http://192.168.100.125:8080/assets/article/path.jpg',
-            },
-            {
-                id: 2,
-                sender: 'sender address',
-                timestamp: moment().valueOf()/1000,
-                blockhash: 'block hash',
-                creator_name: 'creator name 2',
-                price: 300,
-                purchase_count: 100,
-                value: 5.0,
-                path: 'http://192.168.100.125:8080/assets/article/path2.jpg',
-            },
-            {
-                id: 3,
-                sender: 'sender address',
-                timestamp: moment().valueOf()/1000,
-                blockhash: 'block hash',
-                creator_name: 'creator name 2',
-                price: 300,
-                purchase_count: 100,
-                value: 5.0,
-                path: 'http://192.168.100.125:8080/assets/article/path2.jpg',
-            },
-        ],
+        data: articles,
         error: null,
     });
+
+    //res.send({
+    //    success: true,
+    //    data: [
+    //        {
+    //            id: 1,
+    //            sender: 'sender address',
+    //            timestamp: moment().valueOf()/1000,
+    //            blockhash: 'block hash',
+    //            creator_name: 'creator name',
+    //            price: 300,
+    //            purchase_count: 100,
+    //            value: 5.0,
+    //            path: 'http://192.168.100.125:8080/assets/article/path.jpg',
+    //        },
+    //        {
+    //            id: 2,
+    //            sender: 'sender address',
+    //            timestamp: moment().valueOf()/1000,
+    //            blockhash: 'block hash',
+    //            creator_name: 'creator name 2',
+    //            price: 300,
+    //            purchase_count: 100,
+    //            value: 5.0,
+    //            path: 'http://192.168.100.125:8080/assets/article/path2.jpg',
+    //        },
+    //        {
+    //            id: 3,
+    //            sender: 'sender address',
+    //            timestamp: moment().valueOf()/1000,
+    //            blockhash: 'block hash',
+    //            creator_name: 'creator name 2',
+    //            price: 300,
+    //            purchase_count: 100,
+    //            value: 5.0,
+    //            path: 'http://192.168.100.125:8080/assets/article/path2.jpg',
+    //        },
+    //    ],
+    //    error: null,
+    //});
 }
 async function uploadArticleFile(req: any, res: any): Promise<any> {
     //FIXME: this is for hackathon temp implement
@@ -77,29 +79,12 @@ async function uploadArticleFile(req: any, res: any): Promise<any> {
 }
 export async function uploadArticle(req: any, res: any): Promise<any> {
 
-    let sender = '';
-    let timestamp = 0;
-    let blockhash = '';
-    const user_type = await Common.getUserType(req, res);
-    switch (user_type) {
-        case Common.UT_BROWSER:
-            sender = req.header('uniqys-sender');
-            timestamp = req.header('uniqys-timestamp');
-            blockhash = req.header('uniqys-blockhash');
-            break;
-        case Common.UT_APP:
-            const seed = localStorage.getItem(req.body.address);
-            console.log(`seed: ${seed}`);
-            sha256 = crypto.createHash('sha256');
-            sha256.setEncoding('hex');
-            sha256.write(`${seed}`);
-            sha256.end();
-            const hash = sha256.read();
-            const client = new EasyClientForServer(`http://${AppConfig.CLIENT_CONNECT_HOST}:8080`, hash);
-            await client.post('/api/upload', {}, {sign: true});
-            break;
+    let sender = req.header('uniqys-sender');
+    if (!sender) {
+        return res.sendStatus(400);
     }
-
+    let timestamp = req.header('uniqys-timestamp');
+    let blockhash = req.header('uniqys-blockhash');
 
     //FIXME: this is for hackathon temp implement
     //const { article } = req.body;
